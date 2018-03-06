@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,14 +25,29 @@ namespace WpfList
         {
             InitializeComponent();
 
-            List<TodoItem> items = new List<TodoItem>();
-            items.Add(new TodoItem() { Title = "Complete this WPF tutorial", Completion = 45 });
-            items.Add(new TodoItem() { Title = "Learn C#", Completion = 80 });
-            items.Add(new TodoItem() { Title = "Go to shop", Completion = 100 });
-            items.Add(new TodoItem() { Title = "Buy stuff", Completion = 10 });
+            //List<TodoItem> items = new List<TodoItem>();
+            //items.Add(new TodoItem() { Title = "Complete this WPF tutorial", Completion = 45 });
+            //items.Add(new TodoItem() { Title = "Learn C#", Completion = 80 });
+            //items.Add(new TodoItem() { Title = "Go to shop", Completion = 100 });
+            //items.Add(new TodoItem() { Title = "Buy stuff", Completion = 10 });
 
-            TodoListBox.ItemsSource = items;
+            //TodoListBox.ItemsSource = items;
 
+            List<Inimesed> inimesed = new List<Inimesed>();
+
+            var lines = System.IO.File.ReadAllLines(@"C:\Tekst.txt");
+
+            foreach (string item in lines)
+            {
+                var values = item.Split(' ');
+                inimesed.Add(new Inimesed()
+                {
+                    Eesnimi = values[0],
+                    Perekonnanimi = values[1]
+                });
+            }
+
+            TodoListBox.ItemsSource = inimesed;
            
             //List<Inimesed> inimesed = new List<Inimesed>();
             //inimesed.Add(new Inimesed() { Eesnimi = "Joel", Perekonnanimi = "Õispuu", Vanus = 17 });
@@ -50,13 +66,20 @@ namespace WpfList
 
         private void todoListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Title = (TodoListBox.SelectedItem as TodoItem).Title;
+            if (TodoListBox.SelectedItem != null)
+            {
+                //Title = (TodoListBox.SelectedItem as TodoItem).Title;
+                Title = (TodoListBox.SelectedItem as Inimesed).Eesnimi + " " + (TodoListBox.SelectedItem as Inimesed).Perekonnanimi;
+            }           
         }
 
         private void btnShowSelectedItem_Click(object sender, RoutedEventArgs e)
         {
-            if (TodoListBox.SelectedItem != null)
-                MessageBox.Show((TodoListBox.SelectedItem as TodoItem).Title);
+            foreach (var item in TodoListBox.SelectedItems)
+            {
+                //MessageBox.Show((item as TodoItem).Title);
+                MessageBox.Show((item as Inimesed).Eesnimi + " " + (item as Inimesed).Perekonnanimi);
+            }        
         }
 
         private void btnSelectLast_Click(object sender, RoutedEventArgs e)
@@ -99,6 +122,12 @@ namespace WpfList
     {
         public string Title { get; set; }
         public int Completion { get; set; }
+    }
+
+    public class Inimesed
+    {
+        public string Eesnimi { get; set; }
+        public string Perekonnanimi { get; set; }
     }
 
     //public class Inimesed
